@@ -967,8 +967,11 @@ table.pt-table{width:100%;border-collapse:collapse;background:#fff;border:1px so
   document.querySelectorAll('.cta-label').forEach(function(el){ el.textContent = CTA_LABEL; });
 
   // ===== Wiring: Psycho Scaling's own Pixel only. Empty = not wired yet. =====
-  var CONFIG = { VARIANT: 'ps-long-2', PIXEL_ID: '' };
-  if (CONFIG.PIXEL_ID) {
+  // Pixel events (Nik, 19 Nov): this page = PageView only. Booking page = PageView + Lead. Thank-you = PageView + Schedule.
+  // ?preview=1 on the URL = no pixel (for local review, so test visits don't reach Meta).
+  var CONFIG = { VARIANT: 'ps-long-2', PIXEL_ID: '1667189860954273' };
+  var PREVIEW = /[?&]preview=/.test(location.search);
+  if (CONFIG.PIXEL_ID && !PREVIEW) {
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
@@ -977,15 +980,10 @@ table.pt-table{width:100%;border-collapse:collapse;background:#fff;border:1px so
     fbq('init', CONFIG.PIXEL_ID);
     fbq('track', 'PageView');
   }
-  // Every CTA goes to the booking page; ApplyIntent fires once on the first click.
-  // The page's query string (UTMs from the ad) rides along to the booking page, which passes it on to Calendly.
-  var intent = false;
+  // Every CTA goes to the booking page. The page's query string (UTMs from the ad) rides along to the booking page,
+  // which passes it on to Calendly. No click event here: this page fires PageView only.
   document.querySelectorAll('a[href^="book-a-call.html"]').forEach(function(a){
     if (location.search && a.getAttribute('href').indexOf('?') === -1) a.setAttribute('href', a.getAttribute('href') + location.search);
-    a.addEventListener('click', function(){
-      if (intent || !window.fbq) return;
-      intent = true; fbq('trackCustom', 'ApplyIntent', { variant: CONFIG.VARIANT });
-    });
   });
 
   // ===== What we set up + first 30 days: the active step moves from 1 to 6 and loops =====

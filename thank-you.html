@@ -241,7 +241,7 @@ p{margin:0}
 (function(){
   // ===== Wiring =====
   var CONFIG = {
-    PIXEL_ID: '',   // Psycho Scaling's Meta Pixel ID ('' = no pixel). PageView only: Schedule already fired on the booking page.
+    PIXEL_ID: '1667189860954273',   // Psycho Scaling's Meta Pixel ID ('' = no pixel). PageView + Schedule (Nik, 19 Nov).
     // The founders' thank-you video. type: '' (placeholder) | 'youtube' (id = the video id)
     //   | 'mp4' (id = a file path, e.g. 'Content/video/thank-you.mp4') | 'embed' (id = any player's embed URL)
     VIDEO: { type: '', id: '' }
@@ -255,6 +255,13 @@ p{margin:0}
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', CONFIG.PIXEL_ID);
     fbq('track', 'PageView');
+    // Schedule = a call was booked. Fired once per browser session, so a refresh doesn't count a second booking.
+    var seen = false;
+    try { seen = sessionStorage.getItem('ps_schedule_fired') === '1'; } catch (e) {}
+    if (!seen) {
+      fbq('track', 'Schedule');
+      try { sessionStorage.setItem('ps_schedule_fired', '1'); } catch (e) {}
+    }
   }
   var frame = document.getElementById('vframe'), v = CONFIG.VIDEO || {}, html = '';
   var esc = function(s){ return String(s).replace(/"/g, '&quot;'); };

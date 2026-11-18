@@ -254,7 +254,7 @@ p{margin:0}
   var CONFIG = {
     VARIANT: 'ps-book-calendar',
     PAGE_TAG: 'bookpage-calendar',  // sent to Calendly as utm_term
-    PIXEL_ID: '',                   // Psycho Scaling's Meta Pixel ID ('' = no pixel)
+    PIXEL_ID: '1667189860954273',                   // Psycho Scaling's Meta Pixel ID ('' = no pixel)
     CALENDLY_URL: 'https://calendly.com/founders-psychoscaling/call-with-shashwat',
     THANK_YOU_URL: 'thank-you.html'
   };
@@ -327,9 +327,9 @@ p{margin:0}
   }
 
   // Calendly's widget posts its events from https://calendly.com.
-  // On calendly.event_scheduled we fire Schedule and send the visitor to thank-you.html.
+  // On calendly.event_scheduled we send the visitor to thank-you.html, which fires Schedule (not this page).
   // NOTE: Calendly's own event setting ("Confirmation page → Redirect to an external site") can ALSO redirect.
-  // Keep only ONE of the two on, or Schedule fires twice (once here, once wherever that redirect lands).
+  // Keep only ONE of the two on (ours, by default), or the thank-you page loads twice.
   var scheduled = false;
   window.addEventListener('message', function(e){
     if (e.origin !== 'https://calendly.com' || !e.data || typeof e.data.event !== 'string') return;
@@ -348,12 +348,12 @@ p{margin:0}
       scrollNext = true;
     } else if (ev === 'calendly.event_scheduled' && !scheduled) {
       scheduled = true;
-      track('Schedule');
-      setTimeout(function(){ location.href = CONFIG.THANK_YOU_URL; }, PREVIEW ? 0 : 700);   // give the pixel a moment
+      location.href = CONFIG.THANK_YOU_URL + (location.search || '');   // Schedule fires on the thank-you page
     }
   });
 
-  track('ApplyIntent', null, true);   // reaching this page = clicked a CTA on the sales page
+  // Pixel (Nik, 19 Nov): the calendar page = PageView + Lead on load (same as Brandslane's booking page).
+  track('Lead');
 
   var card = document.getElementById('fcard'), book = document.getElementById('book');
   var url = buildUrl({});

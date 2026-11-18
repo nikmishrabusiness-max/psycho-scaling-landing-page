@@ -14,9 +14,9 @@ Static site (plain HTML/CSS/JS, no build step). Upload these files as they are t
 
 ## Still to set before going live
 
-These live in the `CONFIG` block near the bottom of each page.
+Settings live in the `CONFIG` block near the bottom of each page.
 
-1. **Meta Pixel:** `PIXEL_ID` in `index.html`, `book-a-call.html` and `thank-you.html`. Brandslane will update this and re-upload the code. Leave it empty until then.
+1. **Meta Pixel — set (`1667189860954273`).** Events: `index.html` → PageView · `book-a-call.html` → PageView + Lead · `thank-you.html` → PageView + Schedule (once per visit, so a refresh doesn't count a second booking). Add `?preview=1` to any page URL to test it without firing the pixel. Check the events once in Events Manager → Test events after going live.
 2. **Thank-you video:** `VIDEO` in `thank-you.html` (`type: 'youtube'` with the video ID, or `'mp4'` with a file path).
 3. **Calendly redirect:** the booking page already sends people to `thank-you.html`. Keep Calendly's own "redirect to an external site" setting **off**, or bookings get counted twice.
 4. **Calendly questions:** add the booking questions from the doc "Calendly Bookings → Google Sheet (Zap)", Part 2 ("Calendly on its own"), so every booking arrives with the brand's details.
